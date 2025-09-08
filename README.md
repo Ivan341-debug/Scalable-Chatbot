@@ -3,6 +3,8 @@
 Este projeto implementa um chatbot robusto, integrado com **Evolution API**, utilizando filas assíncronas para processamento de texto e áudio.  
 O objetivo é garantir **escala, confiabilidade e persistência de histórico**, separando responsabilidades em diferentes workers.
 
+Esse é meu primeiro projeto criado considerando todas essas tecnologias, em breve irei implementar mais funcionalidades ao chatbot para que ele seja capaz de executar operações distintas! Por enquanto, estou aberto a sugestões e correçõess de quem se sentir disposto a isso, meu principal objetivo é evoluir minha base de conhecimento e garantir eficiência e competência nos mais variados tipos de ferramentas e aplicações!
+
 ---
 
 ## 🚀 Funcionalidades
