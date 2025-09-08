@@ -1,6 +1,4 @@
-# Vamos criar o arquivo README.md com o conteúdo estruturado que foi montado
-
-readme_content = """# Chatbot com RabbitMQ, Redis, Whisper e PostgreSQL
+# Chatbot com RabbitMQ, Redis, Whisper e PostgreSQL
 
 Este projeto implementa um chatbot robusto, integrado com **Evolution API**, utilizando filas assíncronas para processamento de texto e áudio.  
 O objetivo é garantir **escala, confiabilidade e persistência de histórico**, separando responsabilidades em diferentes workers.
@@ -83,33 +81,8 @@ O objetivo é garantir **escala, confiabilidade e persistência de histórico**,
 
 ## 📌 Estrutura de Workers
 
-- `worker_text` → processa mensagens de texto, concatena e envia para a IA  
-- `worker_audio` → processa áudios, transcreve com Whisper e envia para a IA  
-- `worker_ia` → consome mensagens, gera resposta com histórico e envia saída  
-- `worker_persistencia` → grava o histórico do Redis no PostgreSQL  
-- `worker_response` → envia a resposta final ao usuário via Evolution API  
-
----
-
-## ⚡ Fluxo Resumido
-
-```mermaid
-flowchart TD
-    A[Evolution API] --> B[Fila Texto]
-    A --> C[Fila Áudio]
-
-    B --> D[Worker Texto]
-    C --> E[Worker Áudio]
-
-    D --> F[Redis Cache]
-    E --> F
-
-    F --> G[Fila IA]
-    G --> H[Worker IA]
-
-    H --> I[Redis Histórico]
-    I --> J[Fila Persistência]
-    J --> K[PostgreSQL]
-
-    H --> L[Fila Response]
-    L --> M[Evolution API]
+- `cache_worker` → processa mensagens de texto, concatena e envia para a IA  
+- `audio_worker` → processa áudios, transcreve com Whisper e envia para a IA  
+- `AI_worker` → consome mensagens, gera resposta com histórico e envia saída  
+- `database_worker` → grava o histórico do Redis no PostgreSQL  
+- `response_worker` → envia a resposta final ao usuário via Evolution API  
