@@ -2,8 +2,8 @@ import pika
 import json
 import asyncio
 import threading
-from services.redis_service import *
 from utils.timer_async import main
+from services.redis_service import *
 
 def run_async(coro):
     loop = asyncio.new_event_loop()
@@ -29,6 +29,7 @@ def callback(ch, method, properties, body):
     }
 
     print(f"[Worker] Recebido: {usuario}")
+    insere_log('Cache_worker', 'Data enviada', usuario)
 
     dados = GetRedis(usuario)
 
@@ -67,11 +68,11 @@ def callback(ch, method, properties, body):
 # Conecta no RabbitMQ
 connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host="localhost",
-                port=5673,
+                host=os.environ.get('RABBIT_HOST'),
+                port=os.environ.get('RABBIT_PORT', 5672),
                 credentials=pika.PlainCredentials(
-                    "guest",
-                   "guest"
+                    os.environ.get('RABBIT_USER'),
+                    os.environ.get('RABBIT_PASS')
                 )
             )
         )
@@ -79,6 +80,7 @@ channel = connection.channel()
 
 # Consome a fila
 channel.basic_qos(prefetch_count=1)  # processa uma mensagem por vez
+channel.queue_declare(queue='Input Text', durable=True)
 channel.basic_consume(queue='Input Text', on_message_callback=callback)
 
 print("[Worker] Aguardando mensagens...")

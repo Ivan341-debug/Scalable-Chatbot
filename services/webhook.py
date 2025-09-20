@@ -44,9 +44,9 @@ def webhook_handler():
             send = SendInput('Input Audio', data)
 
             if send:
-                return {'status': 'ok'}, 200
+                return {'status': 'ok', 'mensagem': send}, 200
             else:
-                return {'status': 'erro webhook'}, 500
+                return {'status': 'erro webhook', 'message': send}, 500
 
         else:
             data = {

@@ -2,14 +2,20 @@ import os
 import pika
 import json
 import openai
-from dotenv import load_dotenv
 from openai import OpenAI
-from services.redis_service import GetHistories, UpdateHistories
+from dotenv import load_dotenv
 from services.rabbit_mq_service import SendInput
+from services.redis_service import GetHistories, UpdateHistories
 
 load_dotenv()
 
-prompt = 'Você é um assistente útil e responde sempre em português.'
+prompt = """Você é a Alexa, assistente da Hashtag Treinamentos especializada no atendimento de clientes buscando informações.
+Sempre que um usuário fizer alguma pergunta sobre a hashtag treinamentos, estruture seu output nesse formato JSON:
+{
+    "type": "consulta"
+}
+Caso o usuário faça um outro tipo de pergunta apenas o responda!
+"""
 client = OpenAI(api_key=os.environ.get('OPENAI'))
 
 def callback(ch, method, properties, body):
@@ -24,7 +30,7 @@ def callback(ch, method, properties, body):
     messages =[{'role':'system', 'content': prompt}] + GetHistories(usuario)
 
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o-mini-2024-07-18",
         messages=messages,
         temperature=0.7,
         max_tokens=1000
@@ -33,18 +39,22 @@ def callback(ch, method, properties, body):
     UpdateHistories(usuario, 'assistant', resposta)
 
     response = {'usuario': usuario, 'mensagem': resposta}
-    SendInput('Response AI', response)
+    if isinstance(resposta, str):
+        print('string')
+        #SendInput('Response AI', response)
+    if isinstance(resposta, dict):
+        print('dict')
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 # Conecta no RabbitMQ
 connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host="localhost",
-                port=5673,
+                host=os.environ.get('RABBIT_HOST'),
+                port=os.environ.get('RABBIT_PORT'),
                 credentials=pika.PlainCredentials(
-                    "guest",
-                   "guest"
+                    os.environ.get('RABBIT_USER'),
+                    os.environ.get('RABBIT_PASS')
                 )
             )
         )

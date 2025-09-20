@@ -1,5 +1,8 @@
 import psycopg2
-from config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def insere_log(log_type, message, user_id):
     conn_log = None
@@ -7,11 +10,11 @@ def insere_log(log_type, message, user_id):
 
     try:
         conn_log = psycopg2.connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            port=8083
+            dbname=os.environ.get('DB_NAME'),
+            user=os.environ.get('DB_USER'),
+            password=os.environ.get('DB_PASSWORD'),
+            host=os.environ.get('DB_HOST'),
+            port=os.environ.get('DB_PORT')
         )
         cursor_log = conn_log.cursor()
         cursor_log.execute(

@@ -79,11 +79,11 @@ def callback(ch, method, properties, body):
 # Conecta no RabbitMQ
 connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host="localhost",
-                port=5673,
+                host=os.environ.get('RABBIT_HOST'),
+                port=os.environ.get('RABBIT_PORT'),
                 credentials=pika.PlainCredentials(
-                    "guest",
-                   "guest"
+                    os.environ.get('RABBIT_USER'),
+                    os.environ.get('RABBIT_PASS')
                 )
             )
         )

@@ -10,7 +10,7 @@ async def Input(usuario, data):
         timers[usuario].cancel()
         del timers[usuario]
 
-    timer = asyncio.create_task(Cache(usuario, 15, action, data))
+    timer = asyncio.create_task(Cache(usuario, 1, action, data))
     timers[usuario] = timer
 
 async def Cache(user_id, delay, func, data):

@@ -1,8 +1,12 @@
 import time
 import pika
 import json
-from services.db_service import InsertHistories
+import os
+from dotenv import load_dotenv
 from utils.logger import insere_log
+from services.db_service import InsertHistories
+
+load_dotenv()
 
 # Callback para processar cada mensagem da fila
 def callback(ch, method, properties, body):
@@ -22,11 +26,11 @@ def callback(ch, method, properties, body):
 # Conecta no RabbitMQ
 connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host="localhost",
-                port=5673,
+                host=os.environ.get('RABBIT_HOST'),
+                port=os.environ.get('RABBIT_PORT'),
                 credentials=pika.PlainCredentials(
-                    "guest",
-                   "guest"
+                    os.environ.get('RABBIT_USER'),
+                    os.environ.get('RABBIT_PASS')
                 )
             )
         )
